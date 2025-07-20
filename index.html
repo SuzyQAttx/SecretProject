@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Audit Decision</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 0;
+        }
+        h1 {
+            color: #003366;
+            font-size: 24px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 8px;
+        }
+        h2 {
+            color: #003366;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .intro-text {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .required-note {
+            font-style: italic;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        .required {
+            color: #d00;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #666;
+            font-size: 14px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        select {
+            height: 34px;
+        }
+        .example-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        button {
+            background-color: #003366;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #002244;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            font-weight: bold;
+        }
+        .warning {
+            background-color: #fffbf0;
+            border: 1px solid #f0c36d;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 13px;
+        }
+        .warning-title {
+            font-weight: bold;
+            color: #8b4513;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audit Decision</h1>
+        <h2>Get Audit Decision</h2>
+        
+        <div class="intro-text">
+            Please enter your Social Security Number, Tax Year, your Filing Status, and Spouse SSN if applicable as shown on your tax return.
+        </div>
+        
+        <div class="required-note">
+            <em>All fields marked with an asterisk (*) are required.</em>
+        </div>
+        
+        <form id="audit-form">
+            <div class="form-group">
+                <label for="ssn"><strong>Social Security Number</strong> <span class="required">*</span></label>
+                <input type="text" id="ssn" name="ssn" placeholder="123-45-6789" required>
+                <div class="example-text">Enter the SSN or ITIN shown on your tax return.</div>
+                <div class="example-text">Example: 123-45-6789</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="tax-year"><strong>Tax Year</strong> <span class="required">*</span></label>
+                <select id="tax-year" name="tax-year" required>
+                    <option value="">Select Tax Year</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                </select>
+                <div class="example-text">Select the tax year for which you are seeking audit decision.</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="filing-status"><strong>Filing Status</strong> <span class="required">*</span></label>
+                <select id="filing-status" name="filing-status" required>
+                    <option value="">Select Filing Status</option>
+                    <option value="single">Single</option>
+                    <option value="married-joint">Married Filing Jointly</option>
+                    <option value="married-separate">Married Filing Separately</option>
+                    <option value="head-household">Head of Household</option>
+                    <option value="qualifying-widow">Qualifying Widow(er)</option>
+                </select>
+                <div class="example-text">Select the filing status shown on your tax return.</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="spouse-ssn"><strong>Spouse SSN</strong></label>
+                <input type="text" id="spouse-ssn" name="spouse-ssn" placeholder="123-45-6789">
+                <div class="example-text">Enter spouse's SSN if filing jointly or separately.</div>
+                <div class="example-text">Example: 123-45-6789</div>
+            </div>
+            
+            <button type="submit">Submit</button>
+        </form>
+        
+        <div id="result"></div>
+        
+        <div class="warning">
+            <div class="warning-title">Note:</div>
+            For security reasons, we recommend that you close your browser after you have finished accessing your audit decision.
+            <br><br>
+            <strong>This U.S. Government system is for authorized use only.</strong>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

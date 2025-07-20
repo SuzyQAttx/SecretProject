@@ -1,0 +1,17 @@
+# Security Exercise - Exclude sensitive data
+redteam_data.json
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.env
+*.key
+*.pem
+
+# IDE files
+.vscode/settings.json
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
