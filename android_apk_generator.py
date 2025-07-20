@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Android APK Generator for Red Team Testing
+Android APK Generator for Team Testing
 Generates malicious APK with data collection capabilities
 """
 
