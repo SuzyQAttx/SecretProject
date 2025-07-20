@@ -3,9 +3,6 @@
 # Red Team Exercise Deployment Script
 # Educational penetration testing infrastructure
 
-echo "======================================"
-echo "RED TEAM EXERCISE DEPLOYMENT"
-echo "======================================"
 
 # Check if running as authorized user
 if [[ $EUID -eq 0 ]]; then
